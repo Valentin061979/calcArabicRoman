@@ -4,84 +4,100 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        byte operand1, operand2;
-        char operator = 0;
-        int resultat;
 
         System.out.println("Input:");
         String userInput = input.nextLine();
         String[] primer = userInput.split(" ");
-        int provOper2 = primer.length;
-        if (provOper2 > 3) {
-            System.out.println("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
-        } else if (provOper2 < 2) {
-            System.out.println("throws Exception //т.к. строка не является математической операцией");
+        int provOper1 = primer.length;
+        if (provOper1 > 3) {
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                System.out.println(e + "//т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+            }
+        } else if (provOper1 < 2) {
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                System.out.println(e + "//т.к. строка не является математической операцией");
+            }
         } else {
-            String strOperand1 = primer[0];
-            String strOperand2 = primer[2];
-            String strOperator = primer[1];
-
-            switch (strOperator) {
-                case "+" -> operator = '+';
-                case "-" -> operator = '-';
-                case "*" -> operator = '*';
-                case "/" -> operator = '/';
-                default -> System.out.println("throws Exception //т.к. строка не является математической операцией");
-            }
-            byte operandRom1 = Roman.romSearch(strOperand1);
-            byte operandRom2 = Roman.romSearch(strOperand2);
-            if (operandRom1 < 0 && operandRom2 < 0) {
-                operand1 = Byte.parseByte(strOperand1);
-                operand2 = Byte.parseByte(strOperand2);
-                if (operand1 > 10 || operand2 > 10) {
-                    System.out.println("Недопустимое количество символов");
-                } else {
-                    resultat = calculated(operand1, operand2, operator);
-                    System.out.println("Output:");
-                    System.out.println(resultat);
-                }
-            } else {
-                if (operandRom1 < 0 || operandRom2 < 0) {
-                    System.out.println("throws Exception //т.к. используются одновременно разные системы счисления");
-                } else {
-                    if (operandRom1 > 10 || operandRom2 > 10) {
-                        System.out.println("Недопустимое количество символов");
-                    } else {
-                        byte resultatRom = calculated(operandRom1, operandRom2, operator);
-                        if (resultatRom < 0) {
-                            System.out.println("throws Exception //т.к. в римской системе нет отрицательных чисел");
-                        } else {
-                            System.out.println("Output:");
-                            System.out.println(Roman.roman[resultatRom]);
-                        }
-                    }
-                }
-            }
+            String strResultat = calc(userInput);
+            System.out.println("Output:");
+            System.out.println(strResultat);
         }
     }
 
     static byte calculated(byte operand1, byte operand2, char operator) {
         int resultCalc = 0;
         switch (operator) {
-            case '+':
-                resultCalc = operand1 + operand2;
-                break;
-            case '-':
-                resultCalc = operand1 - operand2;
-                break;
-            case '*':
-                resultCalc = operand1 * operand2;
-                break;
-            case '/':
+            case '+' -> resultCalc = operand1 + operand2;
+            case '-' -> resultCalc = operand1 - operand2;
+            case '*' -> resultCalc = operand1 * operand2;
+            case '/' -> {
                 try {
                     resultCalc = operand1 / operand2;
                 } catch (ArithmeticException | InputMismatchException e) {
-                    System.out.println("Exception : " + e);
-                    System.out.println("Делить на ноль нельзя");
-                    break;
+                    System.out.println(e + "Делить на ноль нельзя");
                 }
-                break;
+            }
         }
         return (byte) resultCalc;
+    }
+
+    public static String calc(String input) {
+        String[] primer = input.split(" ");
+        String strOperand1 = primer[0];
+        String strOperand2 = primer[2];
+        String strOperator = primer[1];
+        char operator = 0;
+        switch (strOperator) {
+            case "+" -> operator = '+';
+            case "-" -> operator = '-';
+            case "*" -> operator = '*';
+            case "/" -> operator = '/';
+            default -> {
+                try {
+                    throw new Exception();
+                } catch (Exception e) {
+                    System.out.println(e + "//т.к. строка не является математической операцией");
+                }
+            }
+        }
+        byte operandRom1 = Roman.romSearch(strOperand1);
+        byte operandRom2 = Roman.romSearch(strOperand2);
+        if (operandRom1 < 0 && operandRom2 < 0) {
+            byte operand1 = Byte.parseByte(strOperand1);
+            byte operand2 = Byte.parseByte(strOperand2);
+            if (operand1 > 10 || operand2 > 10) {
+                System.out.println("Недопустимое количество символов");
+            } else {
+                int resultat = calculated(operand1, operand2, operator);
+                return (Integer.toString(resultat));
+            }
+        } else {
+            if (operandRom1 < 0 || operandRom2 < 0) {
+                try {
+                    throw new Exception();
+                } catch (Exception e) {
+                    System.out.println(e + "//т.к. используются одновременно разные системы счисления");
+                }
+            } else if (operandRom1 > 10 || operandRom2 > 10) {
+                System.out.println("Недопустимое количество символов");
+            } else {
+                byte resultatRom = calculated(operandRom1, operandRom2, operator);
+                if (resultatRom < 0) {
+                    try {
+                        throw new Exception();
+                    } catch (Exception e) {
+                        System.out.println(e + "//т.к. в римской системе нет отрицательных чисел");
+                    }
+                } else {
+                    return (Roman.roman[resultatRom]);
+                }
+            }
+        }
+        System.exit(0);
+        return null;
     }
 }
